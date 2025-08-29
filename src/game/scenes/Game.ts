@@ -10,12 +10,22 @@ export class Game extends Scene {
   stars!: Stars;
   bombs!: Phaser.Physics.Arcade.Group;
   cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  enterKey!: Phaser.Input.Keyboard.Key;
 
   score = 0;
   scoreText!: Phaser.GameObjects.Text;
 
   gameOver: boolean = false;
   gameOverText!: Phaser.GameObjects.Text;
+  touchInput = {
+    left: false,
+    right: false,
+    up: false,
+  };
+
+  leftButton?: Phaser.GameObjects.GameObject;
+  rightButton?: Phaser.GameObjects.GameObject;
+  upButton?: Phaser.GameObjects.GameObject;
 
   constructor() {
     super("Game");
@@ -34,6 +44,10 @@ export class Game extends Scene {
     this.bombs = this.physics.add.group();
     this.scoreText = this.add.text(16, 16, "score: 0", { fontSize: "32px" });
     this.cursors = this.input.keyboard!.createCursorKeys();
+
+    this.enterKey = this.input.keyboard!.addKey(
+      Phaser.Input.Keyboard.KeyCodes.ENTER
+    );
 
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.stars, this.platforms);
@@ -54,6 +68,7 @@ export class Game extends Scene {
       undefined,
       this
     );
+    this.createTouchControls();
   }
 
   update() {
@@ -186,10 +201,20 @@ export class Game extends Scene {
   };
 
   private handleInput() {
-    if (this.cursors.left.isDown) {
+    if (this.gameOver && this.enterKey.isDown) {
+      this.restartGame();
+      return;
+    }
+
+    // Check both keyboard and touch input
+    const leftPressed = this.cursors.left.isDown || this.touchInput.left;
+    const rightPressed = this.cursors.right.isDown || this.touchInput.right;
+    const upPressed = this.cursors.up.isDown || this.touchInput.up;
+
+    if (leftPressed) {
       this.player.setVelocityX(-160);
       this.player.anims.play("left", true);
-    } else if (this.cursors.right.isDown) {
+    } else if (rightPressed) {
       this.player.setVelocityX(160);
       this.player.anims.play("right", true);
     } else {
@@ -197,8 +222,68 @@ export class Game extends Scene {
       this.player.anims.play("turn");
     }
 
-    if (this.cursors.up.isDown && this.player.body.touching.down) {
+    if (upPressed && this.player.body.touching.down) {
       this.player.setVelocityY(-500);
     }
+  }
+
+  private createTouchControls() {
+    const gameWidth = this.scale.width;
+    const gameHeight = this.scale.height;
+    const buttonSize = 60;
+    const margin = 30;
+    const opacity = 0.4;
+
+    // Position buttons in bottom-right corner
+    const rightX = gameWidth - margin - buttonSize / 2;
+    const leftX = gameWidth - margin - buttonSize / 2 - buttonSize - 10;
+    const upX = gameWidth - margin - buttonSize / 2;
+    const bottomY = gameHeight - margin - buttonSize / 2;
+    const upY = gameHeight - margin - buttonSize / 2 - buttonSize - 10;
+
+    // Left arrow button
+    this.leftButton = this.add
+      .text(leftX, bottomY, "←", {
+        fontSize: "40px",
+        color: "#ffffff",
+        backgroundColor: "#333333",
+        padding: { x: 10, y: 5 },
+      })
+      .setOrigin(0.5)
+      .setAlpha(opacity)
+      .setInteractive()
+      .on("pointerdown", () => (this.touchInput.left = true))
+      .on("pointerup", () => (this.touchInput.left = false))
+      .on("pointerout", () => (this.touchInput.left = false));
+
+    // Right arrow button
+    this.rightButton = this.add
+      .text(rightX, bottomY, "→", {
+        fontSize: "40px",
+        color: "#ffffff",
+        backgroundColor: "#333333",
+        padding: { x: 10, y: 5 },
+      })
+      .setOrigin(0.5)
+      .setAlpha(opacity)
+      .setInteractive()
+      .on("pointerdown", () => (this.touchInput.right = true))
+      .on("pointerup", () => (this.touchInput.right = false))
+      .on("pointerout", () => (this.touchInput.right = false));
+
+    // Up arrow button
+    this.upButton = this.add
+      .text(upX, upY, "↑", {
+        fontSize: "40px",
+        color: "#ffffff",
+        backgroundColor: "#333333",
+        padding: { x: 10, y: 5 },
+      })
+      .setOrigin(0.5)
+      .setAlpha(opacity)
+      .setInteractive()
+      .on("pointerdown", () => (this.touchInput.up = true))
+      .on("pointerup", () => (this.touchInput.up = false))
+      .on("pointerout", () => (this.touchInput.up = false));
   }
 }
