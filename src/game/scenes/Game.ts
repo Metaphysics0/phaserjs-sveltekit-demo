@@ -231,10 +231,8 @@ export class Game extends Scene {
     const gameWidth = this.scale.width;
     const gameHeight = this.scale.height;
 
-    // Make button size responsive to screen size
-    const isMobile = gameWidth < 600 || gameHeight < 600;
-    const buttonSize = isMobile ? 50 : 60;
-    const margin = isMobile ? 20 : 30;
+    const buttonSize = 60;
+    const margin = 30;
     const opacity = 0.6;
 
     // Position buttons in bottom-right corner
@@ -244,14 +242,16 @@ export class Game extends Scene {
     const bottomY = gameHeight - margin - buttonSize / 2;
     const upY = gameHeight - margin - buttonSize / 2 - buttonSize - 10;
 
+    const buttonStyle = {
+      fontSize: "40px",
+      color: "#ffffff",
+      backgroundColor: "#333333",
+      padding: { x: 20, y: 15 },
+    };
+
     // Left arrow button
     this.leftButton = this.add
-      .text(leftX, bottomY, "←", {
-        fontSize: isMobile ? "32px" : "40px",
-        color: "#ffffff",
-        backgroundColor: "#333333",
-        padding: { x: isMobile ? 8 : 10, y: isMobile ? 4 : 5 },
-      })
+      .text(leftX, bottomY, "←", buttonStyle)
       .setOrigin(0.5)
       .setAlpha(opacity)
       .setInteractive()
@@ -261,12 +261,7 @@ export class Game extends Scene {
 
     // Right arrow button
     this.rightButton = this.add
-      .text(rightX, bottomY, "→", {
-        fontSize: isMobile ? "32px" : "40px",
-        color: "#ffffff",
-        backgroundColor: "#333333",
-        padding: { x: isMobile ? 8 : 10, y: isMobile ? 4 : 5 },
-      })
+      .text(rightX, bottomY, "→", buttonStyle)
       .setOrigin(0.5)
       .setAlpha(opacity)
       .setInteractive()
@@ -276,12 +271,7 @@ export class Game extends Scene {
 
     // Up arrow button
     this.upButton = this.add
-      .text(upX, upY, "↑", {
-        fontSize: isMobile ? "32px" : "40px",
-        color: "#ffffff",
-        backgroundColor: "#333333",
-        padding: { x: isMobile ? 8 : 10, y: isMobile ? 4 : 5 },
-      })
+      .text(upX - 30, upY, "↑", buttonStyle)
       .setOrigin(0.5)
       .setAlpha(opacity)
       .setInteractive()

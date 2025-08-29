@@ -74,7 +74,8 @@
       overflow: hidden;
     }
 
-    #game-container canvas {
+    :global(#game-container canvas) {
+      margin-top: 0 !important;
       max-width: 100vw;
       max-height: 100vh;
     }
