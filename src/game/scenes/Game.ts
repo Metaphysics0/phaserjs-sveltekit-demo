@@ -113,12 +113,30 @@ export class Game extends Scene {
       this.scale.width / 2,
       this.scale.height / 2
     );
-    const bg = this.add.rectangle(0, 0, 300, 200, 0x000000);
+    const bg = this.add.graphics();
+    bg.fillStyle(0xd2b48c); // Tan color
+    bg.fillRoundedRect(-150, -100, 300, 200, 20);
+
     const text = this.add
-      .text(0, 0, "Game Over", { fontSize: "32px", color: "#ffffff" })
+      .text(0, -30, "Game Over", { fontSize: "32px", color: "#ffffff" })
       .setOrigin(0.5);
 
-    container.add([bg, text]);
+    const playAgainButton = this.add
+      .text(0, 30, "Play Again", {
+        fontSize: "24px",
+        color: "#000000",
+        backgroundColor: "#ffffff",
+        padding: { x: 20, y: 10 },
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on("pointerdown", () => this.restartGame());
+
+    container.add([bg, text, playAgainButton]);
+  }
+
+  private restartGame() {
+    this.scene.restart();
   }
 
   private createStars() {
