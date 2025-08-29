@@ -15,6 +15,7 @@ export class Game extends Scene {
   scoreText!: Phaser.GameObjects.Text;
 
   gameOver: boolean = false;
+  gameOverText!: Phaser.GameObjects.Text;
 
   constructor() {
     super("Game");
@@ -104,7 +105,21 @@ export class Game extends Scene {
     this.player.setTint(0xff0000);
     this.player.anims.play("turn");
     this.gameOver = true;
+    this.displayGameOverDialogue();
   };
+
+  private displayGameOverDialogue() {
+    const container = this.add.container(
+      this.scale.width / 2,
+      this.scale.height / 2
+    );
+    const bg = this.add.rectangle(0, 0, 300, 200, 0x000000);
+    const text = this.add
+      .text(0, 0, "Game Over", { fontSize: "32px", color: "#ffffff" })
+      .setOrigin(0.5);
+
+    container.add([bg, text]);
+  }
 
   private createStars() {
     const stars = this.physics.add.group({
