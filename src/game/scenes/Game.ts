@@ -1,9 +1,17 @@
 import { Scene } from "phaser";
 import { loadAssets } from "../asset-loader";
 
+type Player = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+type Platforms = Phaser.Physics.Arcade.StaticGroup;
+type Stars = Phaser.Physics.Arcade.Group;
 export class Game extends Scene {
-  player?: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-  platforms?: Phaser.Physics.Arcade.StaticGroup;
+  player?: Player;
+  platforms?: Platforms;
+  stars?: Stars;
+
+  score: number = 0;
+  scoreText?: Phaser.GameObjects.Text;
+
   constructor() {
     super("Game");
   }
@@ -16,8 +24,20 @@ export class Game extends Scene {
     this.add.image(400, 300, "sky");
     this.platforms = this.createPlatforms();
     this.player = this.createPlayer();
+    this.stars = this.createStars();
+    this.scoreText = this.add.text(16, 16, "score: 0", {
+      fontSize: "32px",
+    });
 
     this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.stars, this.platforms);
+    this.physics.add.overlap(
+      this.player,
+      this.stars,
+      this.collectStar,
+      undefined,
+      this
+    );
   }
 
   update() {
@@ -63,6 +83,27 @@ export class Game extends Scene {
     });
 
     return player;
+  }
+
+  private createStars() {
+    const stars = this.physics.add.group({
+      key: "star",
+      repeat: 11,
+      setXY: { x: 12, y: 0, stepX: 70 },
+    });
+    stars.children.iterate((child) => {
+      // @ts-ignore
+      child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+      return null;
+    });
+    return stars;
+  }
+
+  private collectStar(player: any, star: any) {
+    star.disableBody(true, true);
+    this.score += 10;
+    if (!this.scoreText) return;
+    this.scoreText.setText("Score: " + this.score);
   }
 
   private createKeyboardInput() {
