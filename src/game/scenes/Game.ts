@@ -1,30 +1,27 @@
 import { Scene } from "phaser";
+import { loadAssets } from "../asset-loader";
 
 export class Game extends Scene {
+  player?: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+  platforms?: Phaser.Physics.Arcade.StaticGroup;
   constructor() {
     super("Game");
   }
 
   preload() {
-    this.load.setPath("assets");
-
-    this.load.image("star", "star.png");
-    this.load.image("ground", "platform.png");
-    this.load.image("sky", "sky.png");
-    this.load.image("bomb", "bomb.png");
-    this.load.spritesheet("dude", "dude.png", {
-      frameWidth: 32,
-      frameHeight: 48,
-    });
+    loadAssets(this.load);
   }
 
   create() {
     this.add.image(400, 300, "sky");
+    this.platforms = this.createPlatforms();
+    this.player = this.createPlayer();
 
-    const platforms = this.createPlatforms();
-    const player = this.createPlayer();
+    this.physics.add.collider(this.player, this.platforms);
+  }
 
-    this.physics.add.collider(player, platforms);
+  update() {
+    this.createKeyboardInput();
   }
 
   private createPlatforms() {
@@ -66,5 +63,29 @@ export class Game extends Scene {
     });
 
     return player;
+  }
+
+  private createKeyboardInput() {
+    const cursors = this.input.keyboard?.createCursorKeys();
+    if (!cursors) return;
+    if (!this.player) {
+      console.warn("[createKeyboardInput] - Player not loaded yet");
+      return;
+    }
+
+    if (cursors.left.isDown) {
+      this.player.setVelocityX(-160);
+      this.player.anims.play("left", true);
+    } else if (cursors.right.isDown) {
+      this.player.setVelocityX(160);
+      this.player.anims.play("right", true);
+    } else {
+      this.player.setVelocityX(0);
+      this.player.anims.play("turn");
+    }
+
+    if (cursors.up.isDown && this.player.body.touching.down) {
+      this.player.setVelocityY(-440);
+    }
   }
 }
