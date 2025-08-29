@@ -15,6 +15,20 @@ const config: Types.Core.GameConfig = {
       debug: false,
     },
   },
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: 800,
+    height: 600,
+    min: {
+      width: 320,
+      height: 240,
+    },
+    max: {
+      width: 800,
+      height: 600,
+    },
+  },
   scene: [MainGame],
 };
 

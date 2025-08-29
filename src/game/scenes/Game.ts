@@ -230,9 +230,12 @@ export class Game extends Scene {
   private createTouchControls() {
     const gameWidth = this.scale.width;
     const gameHeight = this.scale.height;
-    const buttonSize = 60;
-    const margin = 30;
-    const opacity = 0.4;
+
+    // Make button size responsive to screen size
+    const isMobile = gameWidth < 600 || gameHeight < 600;
+    const buttonSize = isMobile ? 50 : 60;
+    const margin = isMobile ? 20 : 30;
+    const opacity = 0.6;
 
     // Position buttons in bottom-right corner
     const rightX = gameWidth - margin - buttonSize / 2;
@@ -244,10 +247,10 @@ export class Game extends Scene {
     // Left arrow button
     this.leftButton = this.add
       .text(leftX, bottomY, "←", {
-        fontSize: "40px",
+        fontSize: isMobile ? "32px" : "40px",
         color: "#ffffff",
         backgroundColor: "#333333",
-        padding: { x: 10, y: 5 },
+        padding: { x: isMobile ? 8 : 10, y: isMobile ? 4 : 5 },
       })
       .setOrigin(0.5)
       .setAlpha(opacity)
@@ -259,10 +262,10 @@ export class Game extends Scene {
     // Right arrow button
     this.rightButton = this.add
       .text(rightX, bottomY, "→", {
-        fontSize: "40px",
+        fontSize: isMobile ? "32px" : "40px",
         color: "#ffffff",
         backgroundColor: "#333333",
-        padding: { x: 10, y: 5 },
+        padding: { x: isMobile ? 8 : 10, y: isMobile ? 4 : 5 },
       })
       .setOrigin(0.5)
       .setAlpha(opacity)
@@ -274,10 +277,10 @@ export class Game extends Scene {
     // Up arrow button
     this.upButton = this.add
       .text(upX, upY, "↑", {
-        fontSize: "40px",
+        fontSize: isMobile ? "32px" : "40px",
         color: "#ffffff",
         backgroundColor: "#333333",
-        padding: { x: 10, y: 5 },
+        padding: { x: isMobile ? 8 : 10, y: isMobile ? 4 : 5 },
       })
       .setOrigin(0.5)
       .setAlpha(opacity)
